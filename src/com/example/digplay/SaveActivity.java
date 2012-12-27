@@ -11,12 +11,14 @@ import com.database.DigPlayDB;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -48,30 +50,50 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private LayoutParams params;
 	boolean click = true;
 	
+	private TextView title;
 	private TextView enterName;
 	private TextView enterFormation;
 	private TextView enterType;
 	
 	private Spinner selectFormation;
 	private ArrayList<String> formations;
+	private Handler handler;
+	private ProgressDialog dialog;
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.save);
-	    setControls();
-	    setText();
-	    
-	    
-	    //DigPlayDB.getInstance(getBaseContext()).clearAllDatabases();
+	    runWaitDialog();
+	    handler = new Handler();
+	    setWidgets();
+	    //setControls();
+	    //setText();
+	}
+
+	private void setWidgets() {
+		Runnable runner = new Runnable(){
+			public void run() {
+				handler.post(new Runnable(){
+					public void run(){
+						setControls();
+					    setText();
+						stopWaitDialog();
+					}
+				});
+			}
+	    };
+	    new Thread(runner).start();
 	}
 
 	private void setText() {
+		title = (TextView)findViewById(R.id.save_title);
 		enterName = (TextView)findViewById(R.id.save_enter_name);
 		enterFormation = (TextView)findViewById(R.id.save_enter_formation);
 		enterType = (TextView)findViewById(R.id.save_enter_type);
 		
+		title.setTextColor(Color.WHITE);
 		enterName.setTextColor(Color.WHITE);
 		enterFormation.setTextColor(Color.WHITE);
 		enterType.setTextColor(Color.WHITE);
@@ -234,4 +256,14 @@ public class SaveActivity extends Activity implements OnClickListener {
 		return newFormationName;
 	}
 	*/
+	private void runWaitDialog() {
+		dialog = new ProgressDialog(this);
+		dialog.setMessage("Loading...");
+		dialog.setIndeterminate(true);
+		dialog.setCancelable(false);
+		dialog.show();
+	}
+	private void stopWaitDialog(){
+		dialog.dismiss();
+	}
 }
