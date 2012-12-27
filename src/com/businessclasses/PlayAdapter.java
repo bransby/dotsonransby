@@ -53,6 +53,7 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         Field play = plays.get(position);
         if(play.getPlayType().equals("RUN")){
         	holder.imgIcon.setImageResource(R.drawable.rush_pic);
+        	row.setBackgroundColor(Color.CYAN);
         }else{
         	holder.imgIcon.setImageResource(R.drawable.pass_pic);
         }

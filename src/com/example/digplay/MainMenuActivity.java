@@ -5,12 +5,14 @@ import com.db4o.*;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 
 public class MainMenuActivity extends Activity implements OnClickListener {
@@ -26,6 +28,7 @@ public class MainMenuActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainmenu);
         setButtons();
+        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     }
 
     private void setButtons() {
@@ -60,6 +63,15 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 		if(buttonPressed == drawNewPlay.getId())intent = new Intent(v.getContext(),FormationManagerActivity.class);
 		else if(buttonPressed == createGameplan.getId())intent = new Intent(v.getContext(),GameplanManagerActivity.class);
 		else intent = new Intent(v.getContext(),PlayViewActivity.class);
+		setProgressBarIndeterminateVisibility(true);
 		startActivity(intent);
+	}
+
+	private void runWaitDialog() {
+		ProgressDialog dialog = new ProgressDialog(this);
+		dialog.setMessage("Waiting...");
+		dialog.setIndeterminate(true);
+		dialog.setCancelable(false);
+		dialog.show();
 	}
 }
