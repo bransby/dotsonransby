@@ -159,8 +159,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		static private int BUTTON_Y_VALUE;
 		static private int BUTTON_X_VALUE;
 		
-		Picture createdPlayersPicture; 
-		Picture fieldPicture;
+		Bitmap createdPlayersBitmap; 
+		Bitmap fieldBitmap;
 		
 		Canvas createdPlayersCanvas;
 		Canvas fieldCanvas;
@@ -203,11 +203,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			clickingPathButton = false;
 			clickingRouteButton = false;
 			
-			createdPlayersPicture = new Picture();
-			fieldPicture = new Picture();
+			createdPlayersBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
+			createdPlayersCanvas = new Canvas(createdPlayersBitmap);
 			
-			createdPlayersCanvas = createdPlayersPicture.beginRecording(SCREEN_WIDTH, SCREEN_HEIGHT);
-			fieldCanvas = fieldPicture.beginRecording(SCREEN_WIDTH, SCREEN_HEIGHT);
+			fieldBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
+			fieldCanvas = new Canvas(fieldBitmap);
 				
 			bitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
 			bitmapCanvas = new Canvas(bitmap);
@@ -234,10 +234,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				// 18 = length of the hash marks in pixels 
 				DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 						Math.round(2/DENSITY), Math.round(18/DENSITY), fieldCanvas, paint);
-				fieldPicture.endRecording();
 				drawField = false;
 			}
-			c.drawPicture(fieldPicture);
+			c.drawBitmap(fieldBitmap, 0, 0, paint);
 			
 			DrawingUtils.drawRoutes(field, 0, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, c, paint, PIXELS_PER_YARD, DENSITY);
 	
@@ -245,10 +244,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			{
 				BUTTON_X_VALUE = DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, TOP_ANDROID_BAR, 
 						PLAYER_ICON_RADIUS, BUTTON_Y_VALUE);
-				createdPlayersPicture.endRecording();
 				drawCreatedPlayers = false;
 			}
-			c.drawPicture(createdPlayersPicture);
+			c.drawBitmap(createdPlayersBitmap, 0, 0, paint);
 			
 			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS);
 			
