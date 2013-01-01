@@ -2,7 +2,6 @@ package com.example.digplay;
 
 import java.util.ArrayList;
 
-import com.businessclasses.Constants;
 import com.businessclasses.Field;
 import com.businessclasses.Formation;
 import com.businessclasses.FormationAdapter;
@@ -16,15 +15,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class FormationManagerActivity extends Activity implements OnItemClickListener, OnClickListener {
 	private ListView formationsList;

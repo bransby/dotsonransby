@@ -1,22 +1,14 @@
 package com.businessclasses;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
-import android.util.Log;
 
 public class Field implements Serializable{
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
 	private String _playName;
 	private String _playType;
-	//private Bitmap _bitmap;
 	private String _playFormation;
-	//private byte[] _image;
 
 	public String getPlayName(){
 		return _playName;

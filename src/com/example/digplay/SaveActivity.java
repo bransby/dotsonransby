@@ -10,44 +10,33 @@ import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
-import android.widget.LinearLayout.LayoutParams;
-
-import com.db4o.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 
 public class SaveActivity extends Activity implements OnClickListener {
-	private EditText playFormation;
 	private EditText playName;
 	private Button submit;
 	private Spinner playType;
 	private String formation;
 	private String name;
-	private String type;
 	private Field newField;
 	private Image newImage;
 	private int forIndex;
 	private Formation form;
 	private String newFormationName;
 	
-	private PopupWindow popUp;
-	private TextView text;
-	private Button button;
-	private LinearLayout layout;
-	private LayoutParams params;
 	boolean click = true;
 	
 	private TextView title;

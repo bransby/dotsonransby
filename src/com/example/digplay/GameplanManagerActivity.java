@@ -2,7 +2,6 @@ package com.example.digplay;
 
 import java.util.ArrayList;
 
-import com.businessclasses.Constants;
 import com.businessclasses.GamePlan;
 import com.database.DigPlayDB;
 
@@ -22,7 +21,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -45,7 +43,6 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	private Context gameplanDeleteContext;
 	private Context gameplanAddContext;
 	private Button createNewGameplan;
-	private String gameplanName;
 	private Spinner gameplansSpinner;
 	/** Called when the activity is first created. */
 	@Override
@@ -120,7 +117,6 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 
 				//store to database
 				int index = gameplansSpinner.getSelectedItemPosition();
-				GamePlan gameplan = new GamePlan();
 				if(index >= 0){
 					//gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
 					//gameplan.addPlayToGamePlan(playSelected);

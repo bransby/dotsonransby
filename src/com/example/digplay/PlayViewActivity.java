@@ -3,12 +3,10 @@ package com.example.digplay;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
-import com.businessclasses.GamePlan;
 import com.businessclasses.PlayAdapter;
 import com.businessclasses.Sort;
 import com.database.DigPlayDB;
@@ -17,7 +15,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -124,8 +121,8 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
 		ArrayList<String> playNameList = new ArrayList<String>();
-		for(int i = 0; i < this.plays.size(); i ++){
-			playNameList.add(this.plays.get(i).getPlayName());
+		for(int i = 0; i < plays.size(); i ++){
+			playNameList.add(plays.get(i).getPlayName());
 		}
 		
 		Field play = (Field) adapter.getItemAtPosition(position);
@@ -143,7 +140,6 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		try {
 			email();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

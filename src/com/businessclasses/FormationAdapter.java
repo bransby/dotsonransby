@@ -2,7 +2,6 @@ package com.businessclasses;
 
 import java.util.ArrayList;
 
-import com.database.DigPlayDB;
 import com.example.digplay.R;
 
 import android.content.Context;

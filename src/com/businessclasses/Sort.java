@@ -1,9 +1,6 @@
 package com.businessclasses;
 
 import java.util.ArrayList;
-import com.database.DigPlayDB;
-import android.content.ContextWrapper;
-
 
 public class Sort {
 	public PlayAdapter sortPlaysByRunPass(PlayAdapter adapter,String playType){

@@ -1,17 +1,11 @@
 package com.database;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Path;
 import android.util.Log;
 
 import com.businessclasses.Field;
@@ -19,15 +13,10 @@ import com.businessclasses.Formation;
 import com.businessclasses.GamePlan;
 import com.businessclasses.Image;
 import com.businessclasses.Player;
-import com.db4o.Db4o;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
-import com.db4o.config.AndroidSupport;
-import com.db4o.config.Configuration;
 import com.db4o.config.EmbeddedConfiguration;
-import com.db4o.ext.ExtObjectSet;
-import com.db4o.query.Query;
 import com.db4o.ta.TransparentActivationSupport;
 
 public final class DigPlayDB extends Application{
@@ -36,11 +25,9 @@ public final class DigPlayDB extends Application{
 	private static ObjectContainer gamePlanDB;
 	private static ObjectContainer formationDB;
 
-	private final Context context;
 	private static DigPlayDB instance;
 
 	public DigPlayDB(Context context){
-		this.context = context;
 
 		//creates the embedded database config
 		//final EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
@@ -56,11 +43,9 @@ public final class DigPlayDB extends Application{
 		//creates and/or loads the databases
 		EmbeddedConfiguration playsConfig =  Db4oEmbedded.newConfiguration();
 		playsConfig.common().objectClass(Field.class).objectField("_playName").indexed(true);
-		//config.common().objectClass(Field.class).objectField("_image").indexed(true);
 		playsConfig.common().objectClass(Field.class).indexed(true);
 		playsConfig.common().objectClass(Field.class).cascadeOnUpdate(true);
 		playsConfig.common().objectClass(Field.class).cascadeOnDelete(true);
-		//config.common().objectClass(Field.class).objectField("_image").cascadeOnActivate(true);
 		playsConfig.common().objectClass(Field.class).objectField("_playName").cascadeOnActivate(true);
 		playsConfig.common().add(new TransparentActivationSupport());
 		
@@ -70,8 +55,8 @@ public final class DigPlayDB extends Application{
 		imageConfig.common().objectClass(Image.class).indexed(true);
 		imageConfig.common().objectClass(Image.class).cascadeOnUpdate(true);
 		imageConfig.common().objectClass(Image.class).cascadeOnDelete(true);
-		imageConfig.common().add(new TransparentActivationSupport());
 		imageConfig.common().objectClass(Image.class).objectField("_playName").cascadeOnActivate(true);
+		imageConfig.common().add(new TransparentActivationSupport());
 		
 		EmbeddedConfiguration formationConfig =  Db4oEmbedded.newConfiguration();
 		formationConfig.common().objectClass(Formation.class).objectField("formationName").indexed(true);
@@ -148,7 +133,6 @@ public final class DigPlayDB extends Application{
 	public ArrayList<Formation> getFormations(){
 		ArrayList<Formation> temp = new ArrayList<Formation>();
 		
-
 		ObjectSet result = formationDB.queryByExample(new Formation());
 		while(result.hasNext()){
 			temp.add((Formation) result.next());
@@ -465,7 +449,6 @@ public final class DigPlayDB extends Application{
 
 	public ArrayList<String> getAllGamePlans(){
 		ArrayList<String> temp = new ArrayList<String>();
-		GamePlan found = null;
 		
 		GamePlan obj = new GamePlan();
 		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);

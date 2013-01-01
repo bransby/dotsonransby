@@ -1,18 +1,12 @@
 package com.example.digplay;
 
-import com.database.DigPlayDB;
-import com.db4o.*;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.Button;
 
 public class MainMenuActivity extends Activity implements OnClickListener {

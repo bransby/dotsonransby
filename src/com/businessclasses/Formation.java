@@ -5,13 +5,13 @@ import java.io.Serializable;
 
 import android.graphics.Bitmap;
 
-public class Formation implements Serializable{
+public class Formation implements Serializable {
 	Field theField;
 	String formationName;
 	byte[] image;
 	
 	public Formation(String name, Field f, Bitmap _image){
-		theField =f; //f.clone();
+		theField = f;
 		theField.clearRouteLocations();
 		formationName = name;
 		
