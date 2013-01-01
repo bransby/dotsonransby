@@ -19,7 +19,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Picture;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -131,8 +130,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		private Canvas c;
 		private Paint paint;
 		
-		private boolean drawCreatedPlayers;
-		private boolean drawField;
+		private boolean oneTimeDraw;
+		
 		private boolean moreThanElevenPlayers;
 		private boolean onOtherSideOfScrimmage;
 		private boolean putOnTopOfOtherPlayer;
@@ -159,11 +158,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		static private int BUTTON_Y_VALUE;
 		static private int BUTTON_X_VALUE;
 		
-		Bitmap createdPlayersBitmap; 
-		Bitmap fieldBitmap;
+		Bitmap oneTimeDrawBitmap;
 		
-		Canvas createdPlayersCanvas;
-		Canvas fieldCanvas;
+		Canvas oneTimeDrawCanvas;
 		
 		static private Bitmap bitmap;
 		static private Canvas bitmapCanvas;
@@ -193,8 +190,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			TOUCH_SENSITIVITY = Math.round(PLAYER_ICON_RADIUS*1.5f);
 			BUTTON_Y_VALUE = SCREEN_HEIGHT - TOP_MARGIN;
 			
-			drawField = true;
-			drawCreatedPlayers = true;
+			oneTimeDraw = true;
+			
 			moreThanElevenPlayers = false;
 			onOtherSideOfScrimmage = false;
 			putOnTopOfOtherPlayer = false;
@@ -203,12 +200,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			clickingPathButton = false;
 			clickingRouteButton = false;
 			
-			createdPlayersBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
-			createdPlayersCanvas = new Canvas(createdPlayersBitmap);
+			oneTimeDrawBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
+			oneTimeDrawCanvas = new Canvas(oneTimeDrawBitmap);
 			
-			fieldBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
-			fieldCanvas = new Canvas(fieldBitmap);
-				
 			bitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
 			bitmapCanvas = new Canvas(bitmap);
 			
@@ -219,6 +213,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			c = new Canvas();
 
 			this.setOnTouchListener(this);
+			
+			DrawingUtils.setVariables(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN,
+					TOP_ANDROID_BAR, PIXELS_PER_YARD, PLAYER_ICON_RADIUS, FIELD_LINE_WIDTHS, 
+					DENSITY, TOUCH_SENSITIVITY, BUTTON_Y_VALUE, SCREEN_WIDTH);
+			DrawingUtils.initGrid();
 		}
 
 		@Override 
@@ -228,30 +227,19 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			
 			c = canvas;
 			
-			if (drawField)
+			if (oneTimeDraw)
 			{
-				// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
-				// 18 = length of the hash marks in pixels 
-				DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
-						Math.round(2/DENSITY), Math.round(18/DENSITY), fieldCanvas, paint);
-				drawField = false;
+				DrawingUtils.drawField(false, oneTimeDrawCanvas, paint);
+				BUTTON_X_VALUE = DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, oneTimeDrawCanvas, paint);
+				oneTimeDraw = false;
 			}
-			c.drawBitmap(fieldBitmap, 0, 0, paint);
+			c.drawBitmap(oneTimeDrawBitmap, 0, 0, paint);
 			
-			DrawingUtils.drawRoutes(field, 0, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, c, paint, PIXELS_PER_YARD, DENSITY);
-	
-			if (drawCreatedPlayers)
-			{
-				BUTTON_X_VALUE = DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, TOP_ANDROID_BAR, 
-						PLAYER_ICON_RADIUS, BUTTON_Y_VALUE);
-				drawCreatedPlayers = false;
-			}
-			c.drawBitmap(createdPlayersBitmap, 0, 0, paint);
+			DrawingUtils.drawRoutes(false, field, c, paint);
 			
-			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS);
+			DrawingUtils.drawPlayers(false, field, c, paint, playerIndex, selectionColor);
 			
-			DrawingUtils.drawButtons(canvas, paint, DENSITY, TOP_ANDROID_BAR, TOP_MARGIN, PIXELS_PER_YARD, playerRoute, playerPath, FIELD_LINE_WIDTHS, 
-					PLAYER_ICON_RADIUS, BUTTON_Y_VALUE, BUTTON_X_VALUE);
+			DrawingUtils.drawButtons(c, paint, playerRoute, playerPath, BUTTON_X_VALUE);
 		}
 		
 		private void drawToBitmap()
@@ -260,12 +248,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			
 			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 			// 18 = length of the hash marks in pixels 
-			DrawingUtils.drawField(0, RIGHT_MARGIN-LEFT_MARGIN, 0, BOTTOM_MARGIN-TOP_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
-					Math.round(2/DENSITY), Math.round(18/DENSITY), bitmapCanvas, paint);
+			DrawingUtils.drawField(true, bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, bitmapCanvas, paint, PIXELS_PER_YARD, DENSITY);
+			DrawingUtils.drawRoutes(true, field, bitmapCanvas, paint);
 			
-			DrawingUtils.drawPlayers(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, bitmapCanvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS);
+			DrawingUtils.drawPlayers(true, field, bitmapCanvas, paint, playerIndex, selectionColor);
 			
 			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
 		}
@@ -278,8 +265,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
 				boolean[] returnedFlags = new boolean[3];
-				returnedFlags = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, 
-						playerPath, PLAYER_ICON_RADIUS, BUTTON_Y_VALUE, BUTTON_X_VALUE, FIELD_LINE_WIDTHS);
+				returnedFlags = DrawingUtils.actionDown(field, fieldForCreatePlayer, x, y, playerIndex, playerRoute, 
+						playerPath, BUTTON_X_VALUE);
 				moreThanElevenPlayers = returnedFlags[0];
 				addingPlayer = returnedFlags[1];
 				clickingPathButton = returnedFlags[2];
@@ -362,8 +349,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				break;
 			case MotionEvent.ACTION_UP:
 				boolean[] returnedErrors = new boolean[3];
-				returnedErrors = DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, 
-						TOP_ANDROID_BAR, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, DENSITY, x, y, moreThanElevenPlayers, movePlayer, addingPlayer);
+				returnedErrors = DrawingUtils.actionUp(field, playerIndex, x, y, moreThanElevenPlayers, movePlayer, addingPlayer);
 				moreThanElevenPlayers = returnedErrors[0];
 				onOtherSideOfScrimmage = returnedErrors[1];
 				putOnTopOfOtherPlayer = returnedErrors[2];
@@ -497,7 +483,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}
 
 		public static void flipField() {
-			field.flip(LEFT_MARGIN + RIGHT_MARGIN);
+			field.flip(SCREEN_WIDTH);
 		}
 	}	
 	//used for database to get the field object.
