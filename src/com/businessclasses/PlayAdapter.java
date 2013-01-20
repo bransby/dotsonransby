@@ -8,12 +8,15 @@ import com.example.digplay.R;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PlayAdapter extends ArrayAdapter<Field>{
@@ -51,18 +54,20 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         Field play = plays.get(position);
         if(play.getPlayType().equals("RUN")){
         	holder.imgIcon.setImageResource(R.drawable.rush_pic);
-        	row.setBackgroundColor(Color.CYAN);
         }else{
         	holder.imgIcon.setImageResource(R.drawable.pass_pic);
         }
         holder.topTitle.setText(play.getPlayName());
+        holder.topTitle.setTextSize(22);
+        holder.topTitle.setTypeface(null, Typeface.BOLD);
+        
         holder.bottomTitle.setText(play.getPlayFormation());
         row.setBackgroundColor(Color.WHITE);
         
         //Log.i("list of plays", "" + plays.toString());
         PlayViewActivity.plays = null;
         PlayViewActivity.plays = plays;
-        
+              
         return row;
     }
     
