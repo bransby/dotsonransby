@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PlayAdapter extends ArrayAdapter<Field>{
-
+	
     Context context; 
     int layoutResourceId;    
     ArrayList<Field> plays = null;
@@ -28,6 +28,7 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         this.context = context;
         this.plays = plays;
     }
+    /*
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -70,5 +71,5 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         TextView topTitle;
         TextView bottomTitle;
     }
-    
+    */
 }

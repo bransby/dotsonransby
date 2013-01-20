@@ -2,8 +2,7 @@ package com.example.digplay;
 
 import java.util.ArrayList;
 
-import com.businessclasses.GamePlan;
-import com.database.DigPlayDB;
+import com.database.DatabaseHandler;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameplanManagerActivity extends Activity implements OnItemClickListener, OnClickListener, OnItemSelectedListener{
+	private DatabaseHandler db;
 	private ListView gameplanLV;
 	private ListView playbookLV;
 	private ArrayList<String> playbookPlays = new ArrayList<String>();
@@ -49,9 +49,23 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.gameplan_manager);
+	    
+	    db = new DatabaseHandler(this);
+	    
 	    setTexts();
-	    playbookPlays = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
-	    gameplans = DigPlayDB.getInstance(getBaseContext()).getAllGamePlans();
+	    
+		ArrayList<com.database.Play> listOfPlays = db.getAllPlays();
+		for (int i = 0; i < listOfPlays.size(); i++)
+		{
+			playbookPlays.add(listOfPlays.get(i).getPlayName());
+		}
+		
+		ArrayList<com.database.Gameplan> listOfGameplans = db.getAllGameplans();
+		for (int i = 0; i < listOfGameplans.size(); i++)
+		{
+			gameplans.add(listOfGameplans.get(i).getGameplanName());
+		}
+		
 	    setListViews();
 	    setButton();
 	    setSpinner();
@@ -62,8 +76,7 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	
 	private void setSpinner() {
 		gameplansSpinner = (Spinner)findViewById(R.id.gm_spinner);
-		//gameplans = Constants.getGamePlans();
-		gameplans = DigPlayDB.getInstance(getBaseContext()).getAllGamePlans();
+		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplans);
 		gameplansSpinner.setAdapter(adapter);
 		gameplansSpinner.setOnItemSelectedListener(this);
@@ -104,11 +117,17 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	}
 	
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+		/* TODO michael
 		boolean isGamePlanClicked = false;
-		if(adapter.getId() == gameplanLV.getId())isGamePlanClicked = true;
-		if(!deletePressed){
+		if(adapter.getId() == gameplanLV.getId())
+		{
+			isGamePlanClicked = true;
+		}
+		if(!deletePressed)
+		{
 			String playSelected = (String) adapter.getItemAtPosition(position);
-			if(!gameplanPlays.contains(playSelected)){
+			if(!gameplanPlays.contains(playSelected))
+			{
 				gameplanPlays.add(playSelected);
 				//ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
 				//gameplanLV.setAdapter(thisAdapter);
@@ -117,39 +136,48 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 
 				//store to database
 				int index = gameplansSpinner.getSelectedItemPosition();
-				if(index >= 0){
+				if(index >= 0)
+				{
 					//gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
 					//gameplan.addPlayToGamePlan(playSelected);
 					//gameplan.addPlaysToGameplan(gameplanPlays);
 					DigPlayDB.getInstance(getBaseContext()).addPlayToGameplan(gameplansSpinner.getAdapter().getItem(index).toString(), playSelected);
-					Log.i("plays in gameplan", DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(gameplansSpinner.getAdapter().getItem(index).toString()).toString());
 				}
 			}
-			else{
+			else
+			{
 				Builder alert = new AlertDialog.Builder(this);
 				alert.setTitle("Caution");
 				alert.setMessage("This play has already been added to the game plan");
 				alert.setNeutralButton("Close", null);
 				alert.show();
 			}
-		}else if(isGamePlanClicked){
+		}
+		else if(isGamePlanClicked)
+		{
 			positionSelected = position;
 			deleteContext = this;
 			verifyDelete();
 		}
+		*/
 	}
-	private void verifyDelete() {
+	private void verifyDelete() 
+	{
+		/* TODO michael
 		Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Caution");
 		alert.setMessage("Are you sure you want to delete this play from the gameplan?");
-		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
+		alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() 
+		{
+			public void onClick(DialogInterface dialog, int which)
+			{
 				gameplanPlays.remove(positionSelected);
 				
 				//store to database
 				int index = gameplansSpinner.getSelectedItemPosition();
 				GamePlan gameplan = new GamePlan();
-				if(index >= 0){
+				if(index >= 0)
+				{
 					gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
 					gameplan.addPlaysToGameplan(gameplanPlays);
 					DigPlayDB.getInstance(getBaseContext()).storeGamePlan(gameplan);
@@ -161,6 +189,7 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		});
 		alert.setNegativeButton("Cancel", null);
 		alert.show();
+		*/
 	}
 	public void onClick(View v) {		
 		if(v.getId() == delete.getId()){
@@ -181,14 +210,19 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 			gameplanDeleteVerify();
 		}
 	}
-	private void gameplanDeleteVerify() {
+	private void gameplanDeleteVerify() 
+	{
+		/* TODO michael
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Caution");
 		alert.setMessage("You have selected to delete the entire gameplan. Are you sure you want to do this? It will be deleted from the database.");
-		alert.setPositiveButton("Yes. Delete", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
+		alert.setPositiveButton("Yes. Delete", new DialogInterface.OnClickListener() 
+		{
+			public void onClick(DialogInterface dialog, int whichButton) 
+			{
 			
-			if(gameplansSpinner.getChildCount() > 0){
+			if(gameplansSpinner.getChildCount() > 0)
+			{
 				int index = gameplansSpinner.getSelectedItemPosition();
 				DigPlayDB.getInstance(getBaseContext()).deleteGamePlan(gameplansSpinner.getAdapter().getItem(index).toString());
 				gameplans.remove(gameplans.indexOf(gameplansSpinner.getAdapter().getItem(index).toString()));
@@ -203,17 +237,21 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		});
 		alert.setNegativeButton("Whoops. No don't delete",null);
 		alert.show();
-
+		 */
 	}
 
-	private void popupForName() {
+	private void popupForName() 
+	{
+		/* TODO michael
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Add Gameplan");
 		alert.setMessage("Type in name of gameplan to add");
 		final EditText input = new EditText(this);
 		alert.setView(input);
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {		
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() 
+		{
+			public void onClick(DialogInterface dialog, int whichButton)
+			{		
 				String newName = input.getText().toString();
 				ArrayList<String> newPlays = new ArrayList<String>();
 
@@ -230,16 +268,21 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 			}
 		});
 
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() 
+		{
+			public void onClick(DialogInterface dialog, int whichButton) 
+			{
+				
 			}
 		});
 
 		alert.show();
-		
+		*/
 	}
 
-	public void onItemSelected(AdapterView<?> adapter, View v, int position,long arg3) {
+	public void onItemSelected(AdapterView<?> adapter, View v, int position,long arg3)
+	{
+		/* TODO michael
 		int index = gameplansSpinner.getSelectedItemPosition();
 		String gameplanSelected = gameplansSpinner.getAdapter().getItem(index).toString();		
 		//DigPlayDB db = DigPlayDB.getInstance(this);
@@ -250,10 +293,11 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		resetGameplanList();
 		Toast toast = Toast.makeText(this, gameplanSelected, Toast.LENGTH_LONG);
 		toast.show();
+		*/
 	}
 
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
+	public void onNothingSelected(AdapterView<?> arg0) 
+	{
 		
 	}
 	private void resetGameplanList(){

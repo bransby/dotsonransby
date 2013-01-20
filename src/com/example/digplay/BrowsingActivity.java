@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.businessclasses.Field;
-import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,7 +34,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private ArrayList<String> playNameList = new ArrayList<String>();
 	private int counter;
 	ArrayList<String> playFormationList = new ArrayList<String>();
-	//ArrayList<String> test1 = new ArrayList<String>();
+	
 	ArrayList<Bitmap> test = new ArrayList<Bitmap>();
 	ViewFlipper page;
 
@@ -57,19 +56,17 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	private void setImageView() {
+		/* TODO michael
 		page = (ViewFlipper) findViewById(R.id.viewFlipper1);
 		playNameList = getIntent().getExtras().getStringArrayList("playList");
-		//int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();	
-		//Log.i("list of plays", "" + playNameList);
 				
 		String thePlay = getIntent().getExtras().getString("playName");
 		counter = playNameList.indexOf(thePlay);
-		Log.i("counter", "" + counter);
 		
 		byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(thePlay);	
 		((TextView)findViewById(R.id.browsing_play_name)).setText(thePlay);
 		page.addView(setFlipperImage(BitmapFactory.decodeByteArray(test, 0, test.length)));
-		
+		*/
 		
 	/*	
 		ArrayList<Field> tmp = new ArrayList<Field>();
@@ -99,6 +96,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	private void email() throws IOException {
+		/* TODO michael
 		String emailText = "This play was sent to you from the playbook android app.";
 		String subject = "Play: " + playName.getText();
 		
@@ -127,6 +125,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		EmailPlaybook.EmailAttachment(this, "digital-playbook@googlegroups.com", subject, emailText, attachment);
 		
 		//myFile.delete();
+		 */
 	}
 	
 	private void setButtons() {
@@ -149,6 +148,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(View v) {
+		/* TODO michael
 		if (v.getId() == emailPlay.getId()) {
 			try {
 				email();
@@ -162,9 +162,11 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			intent.putExtra("Field", selectedField);
 			startActivity(intent);
 		}
+		*/
 	}
 
 	private void SwipeRight(){
+		/* TODO michael
 		page.setInAnimation(animFlipInBackward);
 		page.setOutAnimation(animFlipOutBackward);
 		
@@ -186,9 +188,11 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			
 			//page.showPrevious();
 		}		
+		*/
 	}
 
 	private void SwipeLeft(){
+		/* TODO michael
 		page.setInAnimation(animFlipInForeward);
 		page.setOutAnimation(animFlipOutForeward);
 
@@ -210,8 +214,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
 			//page.showNext();
 		}
-		
-		
+		*/
 	}
 	SimpleOnGestureListener simpleOnGestureListener 
 	= new SimpleOnGestureListener(){

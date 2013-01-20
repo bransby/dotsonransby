@@ -1,21 +1,9 @@
 package com.businessclasses;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Field implements Serializable{
+public class Field {
 	private ArrayList<Player> _playersOnField;
-	private boolean _run;
-	private String _playName;
-	private String _playType;
-	private String _playFormation;
-
-	public String getPlayName(){
-		return _playName;
-	}
-	public void setPlayName(String name){
-		_playName = name;
-	}
 	
 	public Field getField() {
 		return this;
@@ -43,25 +31,6 @@ public class Field implements Serializable{
 	public void addPlayers(ArrayList<Player> newPlayers){
 		this._playersOnField = newPlayers;
 	}
-
-	/*
-	public Bitmap getImage(){
-		Long start = System.nanoTime();
-		
-		Bitmap temp =  BitmapFactory.decodeByteArray(this._image, 0, _image.length);
-
-		Long end = System.nanoTime();
-		Log.i("image decode", "" + ((end - start)/1000000));
-		
-		return temp;
-	}
-	public void setImage(Bitmap image){
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-		this._image = stream.toByteArray();
-	}
-	
-	*/
 	public void clearField(){
 		_playersOnField.clear();
 	}
@@ -101,24 +70,6 @@ public class Field implements Serializable{
 	}
 	public void removeAllPlayers(){
 		_playersOnField.clear();
-	}
-	public boolean isRun() {
-		return _run;
-	}
-	public void setRun(boolean _run) {
-		this._run = _run;
-	}
-	public String getPlayType() {
-		return _playType;
-	}
-	public void setPlayType(String _playType) {
-		this._playType = _playType;
-	}
-	public void setPlayFormation(String _playFormation){
-		this._playFormation = _playFormation;
-	}
-	public String getPlayFormation(){
-		return this._playFormation;
 	}
 	public Field clone(){
 		try {

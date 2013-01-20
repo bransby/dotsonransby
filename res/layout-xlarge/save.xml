@@ -37,22 +37,6 @@
     </EditText>
 
     <TextView
-        android:id="@+id/save_enter_formation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dip"
-        android:text="Select Formation"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Spinner
-        android:id="@+id/save_select_formation"
-        android:layout_width="600dip"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dip" />
-
-    <TextView
         android:id="@+id/save_enter_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,13 +59,5 @@
         android:layout_gravity="center"
         android:layout_marginTop="40dip"
         android:text="Submit" />
-
-    <TextView
-        android:id="@+id/save_enter_formation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dip"
-        android:text="Enter play formation"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>

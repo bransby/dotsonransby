@@ -13,7 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FormationAdapter extends ArrayAdapter<Formation>{
+public class FormationAdapter {
+	/*
 	Context context; 
     int layoutResourceId;    
     ArrayList<Formation> formations = null;
@@ -53,5 +54,5 @@ public class FormationAdapter extends ArrayAdapter<Formation>{
         ImageView formationIcon;
         TextView formationName;
     }
-
+	*/
 }

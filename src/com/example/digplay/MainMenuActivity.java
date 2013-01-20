@@ -14,15 +14,12 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 	private Button drawNewPlay;
 	private Button createGameplan;
 	private Button lookAtPlaybook;
-	//public static DigPlayDBHelper db = new DigPlayDBHelper();
-	//public String test = this.getDir("data", 0) + "/";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainmenu);
         setButtons();
-        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     }
 
     private void setButtons() {
@@ -33,16 +30,6 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 		drawNewPlay.setOnClickListener(this);
 		createGameplan.setOnClickListener(this);
 		lookAtPlaybook.setOnClickListener(this);
-		/*
-		drawNewPlay.setGravity(Gravity.CENTER_HORIZONTAL);
-		drawNewPlay.setGravity(Gravity.CENTER_VERTICAL);
-		
-		viewGameplan.setGravity(Gravity.CENTER_HORIZONTAL);
-		viewGameplan.setGravity(Gravity.CENTER_VERTICAL);
-		createGameplan.setGravity(Gravity.CENTER_HORIZONTAL);
-		createGameplan.setGravity(Gravity.CENTER_VERTICAL);
-		lookAtPlaybook.setGravity(Gravity.CENTER_HORIZONTAL);
-		lookAtPlaybook.setGravity(Gravity.CENTER_VERTICAL);*/
 	}
 
 	@Override

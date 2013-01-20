@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
 import com.businessclasses.PlayAdapter;
-import com.businessclasses.Sort;
-import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,31 +23,41 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.database.DatabaseHandler;
 import com.example.digplay.EmailPlaybook;
 
 public class PlayViewActivity extends Activity implements OnItemClickListener, OnClickListener, OnItemSelectedListener {
+	private DatabaseHandler db;
+	
 	private ListView playList;
 	private Spinner playSort;
-	private Spinner gamePlans;
+	private Spinner gameplanSpinner;
 	private Button refineSearch;
-	private PlayAdapter _adapter; 
 	private TextView title;
 	private TextView playTypeTitle;
 	private TextView gamePlanTitle;
-	public static ArrayList<Field> plays = new ArrayList<Field>();
+	public static ArrayList<String> plays = new ArrayList<String>();
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.playview);
+	    
+	    db = new DatabaseHandler(this);
+	    
 	    setSpinners();
 	    setButtons();
 	    setText();
 	    setListView();
 	}
 	
+	/*
+	 * Uncomment when fixing email
+	 */
 	private void email() throws IOException {
+		/*
 		String emailText = "This email includes the following Play Types: " + playSort.getSelectedItem().toString() + 
 				"\nFrom the gameplan: " + gamePlans.getSelectedItem().toString();
 		String subject = playSort.getSelectedItem().toString() + " from " + gamePlans.getSelectedItem().toString();
@@ -70,10 +78,11 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		}
 
 		EmailPlaybook.EmailAttachment(this, "krebsba4@gmail.com", subject, emailText, attachmentPath);
+		*/
 	}
 	
-	
-	private void setText() {
+	private void setText() 
+	{
 		title = (TextView)findViewById(R.id.pv_title);
 		playTypeTitle = (TextView)findViewById(R.id.pv_play_type_title);
 		gamePlanTitle = (TextView)findViewById(R.id.pv_gameplan_title);
@@ -82,18 +91,24 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		gamePlanTitle.setTextColor(Color.WHITE);
 		
 	}
-	private void setSpinners() {
+	private void setSpinners() 
+	{
 		playSort = (Spinner)findViewById(R.id.playview_sort_by);
-		gamePlans = (Spinner)findViewById(R.id.playview_gameplan);
+		gameplanSpinner = (Spinner)findViewById(R.id.playview_gameplan);
 		ArrayList<String> playTypes = Constants.getPlayTypes();
-		ArrayList<String> listOfGamePlans = new ArrayList<String>();
-		listOfGamePlans.add("All Gameplans");
-		listOfGamePlans.addAll(DigPlayDB.getInstance(getBaseContext()).getAllGamePlans());
+		
+		ArrayList<String> gameplans = new ArrayList<String>();
+		ArrayList<com.database.Gameplan> listOfGameplans = db.getAllGameplans();
+		for (int i = 0; i < listOfGameplans.size(); i++)
+		{
+			gameplans.add(listOfGameplans.get(i).getGameplanName());
+		}
+		gameplans.add("All Gameplans");
 		
 		ArrayAdapter<String> playTypeAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,playTypes);
-		ArrayAdapter<String> gamePlanAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listOfGamePlans);
+		ArrayAdapter<String> gamePlanAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplans);
 		playSort.setAdapter(playTypeAdapter);
-		gamePlans.setAdapter(gamePlanAdapter);
+		gameplanSpinner.setAdapter(gamePlanAdapter);
 
 		playSort.setOnItemSelectedListener(new OnItemSelectedListener() 
         {
@@ -103,7 +118,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
             }
             public void onNothingSelected(AdapterView<?> arg0) {}
         });
-		gamePlans.setOnItemSelectedListener(new OnItemSelectedListener() 
+		gameplanSpinner.setOnItemSelectedListener(new OnItemSelectedListener() 
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long i) 
             {
@@ -114,12 +129,20 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	private void setListView() {
 		playList = (ListView)findViewById(R.id.playviewlist);
-		PlayAdapter adapter = new PlayAdapter (this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
-		_adapter = adapter;
-		playList.setAdapter(_adapter);
+		
+		ArrayList<String> plays = new ArrayList<String>();
+		ArrayList<com.database.Play> listOfPlays = db.getAllPlays();
+		for (int i = 0; i < listOfPlays.size(); i++)
+		{
+			plays.add(listOfPlays.get(i).getPlayName());
+		}
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.listview_item_row, plays);
+		playList.setAdapter(adapter);
 		playList.setOnItemClickListener(this);
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+		/*
 		ArrayList<String> playNameList = new ArrayList<String>();
 		for(int i = 0; i < plays.size(); i ++){
 			playNameList.add(plays.get(i).getPlayName());
@@ -130,6 +153,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		intent.putStringArrayListExtra("playList", playNameList);
 		intent.putExtra("playName", play.getPlayName());
 		startActivity(intent);
+		*/
 	}
 	
 	private void setButtons(){
@@ -145,6 +169,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void updateList()
 	{
+		/*
 		// get plays
 		Sort s = new Sort();
 		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
@@ -158,6 +183,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		adapter = s.sortPlaysByRunPass(adapter, playType);
 		adapter = s.sortPlaysByPlaybook(adapter, playbook, listOfPlaysInGameplan);
 		playList.setAdapter(adapter);
+		*/
 	}
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {}
 	public void onNothingSelected(AdapterView<?> arg0) {}

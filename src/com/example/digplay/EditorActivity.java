@@ -3,7 +3,6 @@ package com.example.digplay;
 import java.io.IOException;
 
 import com.businessclasses.Field;
-import com.businessclasses.Formation;
 import com.businessclasses.Location;
 import com.businessclasses.Path;
 import com.businessclasses.Player;
@@ -34,6 +33,8 @@ import android.widget.Button;
 public class EditorActivity extends Activity implements OnClickListener  {
 
 	private static Context context; // used for saving context of drawView
+	
+	private static boolean noFormation;
 	
 	private static boolean arrowRoute; // is the route an arrow?
 	private static boolean solidPath; // is the path solid?
@@ -70,15 +71,10 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 	private static float DENSITY; // DENSITY coefficient
 	
-	private static int SCREEN_HEIGHT;
-	private static int SCREEN_WIDTH;
-	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		DENSITY = getResources().getDisplayMetrics().density;
-		SCREEN_HEIGHT = getResources().getDisplayMetrics().heightPixels;
-		SCREEN_WIDTH = getResources().getDisplayMetrics().widthPixels;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
 
@@ -106,23 +102,33 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		save.setBackgroundResource(R.drawable.floppy_disk_trans);
 		
 		Bundle extras = getIntent().getExtras();
-		if(extras == null)field = new Field();
-		else{
-			Formation formation = (Formation)extras.getSerializable("Formation");
+		if(extras == null)
+		{
+			field = new Field();
+		}
+		else
+		{
+			//Formation formation = (Formation)extras.getSerializable("Formation");
 			Field passedField = (Field)extras.getSerializable("Field");
 			
-			if(formation != null) 
-				field = formation.getFormation();
-			else if (passedField != null) 
+			//if(formation != null) 
+				//field = formation.getFormation();
+			//else if (passedField != null) 
+			if (passedField != null)
 				field = passedField.getField();
 			else 
 				field = new Field();
 		}
 	}
 	
-	public static Bitmap getBitmap()
+	public static Bitmap getRouteBitmap()
 	{
-		return drawView.getBitmap();
+		return drawView.getRouteBitmap();
+	}
+	
+	public static Bitmap getFormationBitmap()
+	{
+		return drawView.getFormationBitmap();
 	}
 	
 	public static class DrawView extends View implements OnTouchListener {
@@ -144,45 +150,41 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		// that users can drag onto the field
 		private Field fieldForCreatePlayer;
 		
-		// static final values
-		static private int FIELD_HEIGHT;
-		static private int LEFT_MARGIN;
-		static private int RIGHT_MARGIN;
-		static private int TOP_MARGIN;
-		static private int BOTTOM_MARGIN;
-		static private float PIXELS_PER_YARD;
-		static private int FIELD_LINE_WIDTHS;
-		static private int PLAYER_ICON_RADIUS;
-		static private int TOP_ANDROID_BAR;
-		static private int TOUCH_SENSITIVITY;
-		static private int BUTTON_Y_VALUE;
-		static private int BUTTON_X_VALUE;
+		private int SCREEN_HEIGHT;
+		private int SCREEN_WIDTH;
+		private int FIELD_HEIGHT;
+		private int LEFT_MARGIN;
+		private int RIGHT_MARGIN;
+		private int TOP_MARGIN;
+		private int BOTTOM_MARGIN;
+		private float PIXELS_PER_YARD;
+		private int FIELD_LINE_WIDTHS;
+		private int PLAYER_ICON_RADIUS;
+		private int TOP_ANDROID_BAR;
+		private int TOUCH_SENSITIVITY;
+		private int BUTTON_Y_VALUE;
+		private int BUTTON_X_VALUE;
 		
-		Bitmap oneTimeDrawBitmap;
+		private static Bitmap oneTimeDrawBitmap;
+		private Canvas oneTimeDrawCanvas;
 		
-		Canvas oneTimeDrawCanvas;
+		private static Bitmap formationBitmap;
+		private Canvas formationBitmapCanvas;
 		
-		static private Bitmap bitmap;
-		static private Canvas bitmapCanvas;
+		private static Bitmap routeBitmap;
+		private Canvas routeBitmapCanvas;;
 
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
-			build(context, attrs);
 			EditorActivity.setContext(context);
 		}
-
-		public Bitmap getBitmap() {
-			
-			return bitmap;
-		}
-
-		public void build(Context context, AttributeSet attrs) throws IOException
-		{		
+		
+		public void build()
+		{
 			LEFT_MARGIN = Math.round(40/DENSITY);
 			RIGHT_MARGIN = SCREEN_WIDTH - LEFT_MARGIN;
 			TOP_MARGIN = Math.round(60/DENSITY);
 			FIELD_LINE_WIDTHS = Math.round(4/DENSITY);
-			TOP_ANDROID_BAR = Math.round(50*DENSITY);
 			FIELD_HEIGHT = SCREEN_HEIGHT - TOP_MARGIN*3 - TOP_ANDROID_BAR;
 			BOTTOM_MARGIN = TOP_MARGIN + FIELD_HEIGHT;
 			PIXELS_PER_YARD = FIELD_HEIGHT/45f; // 45 yards on the field
@@ -192,6 +194,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			
 			oneTimeDraw = true;
 			
+			oneTimeDrawBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
+			oneTimeDrawCanvas = new Canvas(oneTimeDrawBitmap);
+			
 			moreThanElevenPlayers = false;
 			onOtherSideOfScrimmage = false;
 			putOnTopOfOtherPlayer = false;
@@ -199,12 +204,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			clickingButton = false;
 			clickingPathButton = false;
 			clickingRouteButton = false;
-			
-			oneTimeDrawBitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888);
-			oneTimeDrawCanvas = new Canvas(oneTimeDrawBitmap);
-			
-			bitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
-			bitmapCanvas = new Canvas(bitmap);
 			
 			fieldForCreatePlayer = new Field();
 			
@@ -218,6 +217,33 @@ public class EditorActivity extends Activity implements OnClickListener  {
 					TOP_ANDROID_BAR, PIXELS_PER_YARD, PLAYER_ICON_RADIUS, FIELD_LINE_WIDTHS, 
 					DENSITY, TOUCH_SENSITIVITY, BUTTON_Y_VALUE, SCREEN_WIDTH);
 			DrawingUtils.initGrid();
+		}
+		
+		public static void recycleBitmaps()
+		{
+			if (routeBitmap != null)
+			{
+				routeBitmap.recycle();
+				routeBitmap = null;
+			}
+			if (formationBitmap != null)
+			{
+				formationBitmap.recycle();
+				formationBitmap = null;
+			}
+			oneTimeDrawBitmap.recycle();
+			oneTimeDrawBitmap = null;
+			System.gc();
+		}
+
+		public Bitmap getRouteBitmap() 
+		{	
+			return routeBitmap;
+		}
+		
+		public Bitmap getFormationBitmap() 
+		{	
+			return formationBitmap;
 		}
 
 		@Override 
@@ -242,19 +268,48 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			DrawingUtils.drawButtons(c, paint, playerRoute, playerPath, BUTTON_X_VALUE);
 		}
 		
-		private void drawToBitmap()
+		@Override
+		public void onSizeChanged(int width, int height, int oldw, int oldh)
 		{
+			SCREEN_HEIGHT = getResources().getDisplayMetrics().heightPixels;
+			SCREEN_WIDTH = getResources().getDisplayMetrics().widthPixels;
+			
+			TOP_ANDROID_BAR = SCREEN_HEIGHT - height;
+			build();
+		}
+		
+		private void drawToFormationBitmap()
+		{
+			formationBitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
+			formationBitmapCanvas = new Canvas(formationBitmap);
+			
 			paint.setColor(Color.BLACK);
 			
 			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 			// 18 = length of the hash marks in pixels 
-			DrawingUtils.drawField(true, bitmapCanvas, paint);
+			DrawingUtils.drawField(true, formationBitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(true, field, bitmapCanvas, paint);
+			DrawingUtils.drawPlayers(true, field, formationBitmapCanvas, paint, playerIndex, selectionColor);
 			
-			DrawingUtils.drawPlayers(true, field, bitmapCanvas, paint, playerIndex, selectionColor);
+			formationBitmapCanvas.drawBitmap(formationBitmap, 0, 0, paint);
+		}
+		
+		private void drawToRouteBitmap()
+		{
+			routeBitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
+			routeBitmapCanvas = new Canvas(routeBitmap);
 			
-			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
+			paint.setColor(Color.BLACK);
+			
+			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
+			// 18 = length of the hash marks in pixels 
+			DrawingUtils.drawField(true, routeBitmapCanvas, paint);
+			
+			DrawingUtils.drawRoutes(true, field, routeBitmapCanvas, paint);
+			
+			DrawingUtils.drawPlayers(true, field, routeBitmapCanvas, paint, playerIndex, selectionColor);
+			
+			routeBitmapCanvas.drawBitmap(routeBitmap, 0, 0, paint);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
@@ -482,7 +537,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			return true;
 		}
 
-		public static void flipField() {
+		public void flipField() {
 			field.flip(SCREEN_WIDTH);
 		}
 	}	
@@ -518,7 +573,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		Intent intent = null;
 		int id = v.getId();
 		if(id == save.getId()){
-			drawView.drawToBitmap();
+			drawView.drawToRouteBitmap();
+			drawView.drawToFormationBitmap();
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
 		}else if(id == clearPlayerRoute.getId()){
@@ -529,7 +585,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				drawView.invalidate();
 			}
 		}else if(id== flipButton.getId()){
-			DrawView.flipField();
+			drawView.flipField();
 			drawView.invalidate();
 		}
 		else if (id == trashCan.getId())
@@ -581,7 +637,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState){
 		super.onSaveInstanceState(savedInstanceState);
-		savedInstanceState.putSerializable("Field", field);
 	}
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState){

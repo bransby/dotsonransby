@@ -3,9 +3,7 @@ package com.example.digplay;
 import java.util.ArrayList;
 
 import com.businessclasses.Field;
-import com.businessclasses.Formation;
-import com.businessclasses.FormationAdapter;
-import com.database.DigPlayDB;
+import com.database.DatabaseHandler;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -22,8 +20,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class FormationManagerActivity extends Activity implements OnItemClickListener, OnClickListener {
+	private DatabaseHandler db;
+	
+	private static String formationName;
+	
 	private ListView formationsList;
-	private ArrayList<Formation> formations;
 	private Button addFormation;
 	private TextView title;
 	private ProgressDialog dialog;
@@ -33,10 +34,19 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.formation_manager);
+	    
+	    db = new DatabaseHandler(this);
+	    
 	    runWaitDialog();
 	    handler = new Handler();
 	    setWidgets();
 	}
+	
+	public static String getFormationName()
+	{
+		return formationName;
+	}
+	
 	private void setWidgets() {
 		Runnable runner = new Runnable(){
 			public void run() {
@@ -63,8 +73,15 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 	}
 	private void setListView() {
 		formationsList = (ListView)findViewById(R.id.formations_list);
-		formations = new ArrayList<Formation>();
-		formations = DigPlayDB.getInstance(getBaseContext()).getFormations();
+
+		ArrayList<String> formations = new ArrayList<String>();
+		ArrayList<com.database.Formation> listOfFormations = db.getAllFormations();
+		for (int i = 0; i < listOfFormations.size(); i++)
+		{
+			formations.add(listOfFormations.get(i).getFormationName());
+		}
+		
+		/* TODO: michael
 		if(formations.isEmpty()){
 			Field f = new Field();
 			Formation emptyFormation = new Formation("There are no saved formations",f);
@@ -72,13 +89,16 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 		}
 		FormationAdapter adapter = new FormationAdapter(this,R.layout.formation_listview_item_row,formations);
 		formationsList.setAdapter(adapter);
+		*/
 		formationsList.setOnItemClickListener(this);
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+		/* TODO michael
 		Formation selectedFormation = (Formation)adapter.getItemAtPosition(position);
 		Intent intent = new Intent(v.getContext(),EditorActivity.class);
 		intent.putExtra("Formation", selectedFormation);
 		startActivity(intent);
+		*/
 	}
 	public void onClick(View v) {
 		Intent intent  = new Intent(v.getContext(),EditorActivity.class);

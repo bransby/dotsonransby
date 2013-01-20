@@ -1,8 +1,6 @@
 package com.businessclasses;
 
-import java.io.Serializable;
-
-public class Location implements Serializable{
+public class Location {
 	int _x;
 	int _y;
 	public Location(int x, int y){
