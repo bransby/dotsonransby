@@ -248,8 +248,6 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		gameplanPlays = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(gameplanSelected);
 
 		resetGameplanList();
-		Toast toast = Toast.makeText(this, gameplanSelected, Toast.LENGTH_LONG);
-		toast.show();
 	}
 
 	public void onNothingSelected(AdapterView<?> arg0) {
