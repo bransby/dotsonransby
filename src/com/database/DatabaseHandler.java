@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper
 {
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	
 	private static final String DATABASE_NAME = "digPlay";
 
@@ -38,6 +38,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	
 	private static final String TABLE_GAMEPLANS = "gameplans";
 	private static final String KEY_GAMEPLAN_NAME = "gameplan_name";
+	
+	private static final String TABLE_GAMEPLAN_PLAYS = "gameplan_plays";
 	
 	private static final String CREATE_PLAYERS = "CREATE TABLE " 
 			+ TABLE_PLAYERS + "(" + KEY_PLAYER_ID
@@ -68,6 +70,11 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	private static final String CREATE_GAMEPLANS = "CREATE TABLE "
 			+ TABLE_GAMEPLANS + "(" + KEY_GAMEPLAN_NAME
 			+ " TEXT PRIMARY KEY)";
+	
+	private static final String CREATE_GAMEPLAN_PLAYS = "CREATE TABLE "
+			+ TABLE_GAMEPLAN_PLAYS + "(" + KEY_GAMEPLAN_NAME
+			+ " TEXT PRIMARY KEY," + KEY_PLAY_NAME
+			+ " TEXT PRIMARY KEY)";
 
 	public DatabaseHandler(Context context)
 	{
@@ -82,6 +89,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		database.execSQL(CREATE_ROUTE_LOCATIONS);
 		database.execSQL(CREATE_FORMATIONS);
 		database.execSQL(CREATE_GAMEPLANS);
+		database.execSQL(CREATE_GAMEPLAN_PLAYS);
 	}
 
 	@Override
@@ -91,6 +99,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROUTE_LOCATIONS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_FORMATIONS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAMEPLANS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAMEPLAN_PLAYS);
 		
 		onCreate(db);
 	}
@@ -290,6 +299,18 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		db.close();
 	}
 	
+	public void addGameplanPlay(GameplanPlay gameplanPlay)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		ContentValues values = new ContentValues();
+		values.put(KEY_GAMEPLAN_NAME, gameplanPlay.getGameplanName());
+		values.put(KEY_PLAY_NAME, gameplanPlay.getPlayName());
+		
+		db.insert(TABLE_GAMEPLAN_PLAYS, null, values);
+		db.close();
+	}
+	
 	/*
 	 * GET SINGLE ROW OF TABLE
 	 */
@@ -315,12 +336,12 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		 return player;
 	}
 	
-	public Play getPlay(int id)
+	public Play getPlay(String id)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_PLAYS, new String[] { KEY_PLAY_NAME,
 				COLUMN_FORMATION_NAME, COLUMN_TYPE, COLUMN_BITMAP }, KEY_PLAY_NAME + "=?",
-	            new String[] { String.valueOf(id) }, null, null, null, null);
+	            new String[] { id }, null, null, null, null);
 		 if (cursor != null)
 		 {
 			 cursor.moveToFirst();
@@ -350,12 +371,12 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		 return routeLocation;
 	}
 	
-	public Formation getFormation(int id)
+	public Formation getFormation(String id)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_FORMATIONS, new String[] { KEY_FORMATION_NAME, 
 				COLUMN_BITMAP}, KEY_FORMATION_NAME + "=?", 
-				new String[] { String.valueOf(id) }, null, null, null, null);
+				new String[] { id }, null, null, null, null);
 		 if (cursor != null)
 		 {
 			 cursor.moveToFirst();
@@ -366,11 +387,11 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		 return formation;
 	}
 	
-	public Gameplan getGameplan(int id)
+	public Gameplan getGameplan(String id)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_GAMEPLANS, new String[] { KEY_GAMEPLAN_NAME},
-				KEY_GAMEPLAN_NAME + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
+				KEY_GAMEPLAN_NAME + "=?", new String[] { id }, null, null, null, null);
 		 if (cursor != null)
 		 {
 			 cursor.moveToFirst();
@@ -378,6 +399,21 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		 Gameplan gameplan = new Gameplan(cursor.getString(0));
 		 db.close();
 		 return gameplan;
+	}
+	
+	public GameplanPlay getGameplanPlay(String gameplan_name, String play_name)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.query(TABLE_GAMEPLAN_PLAYS, new String[] { KEY_GAMEPLAN_NAME},
+				KEY_GAMEPLAN_NAME + "=? AND " + KEY_PLAY_NAME + "=?", 
+				new String[] { gameplan_name, play_name }, null, null, null, null);
+		 if (cursor != null)
+		 {
+			 cursor.moveToFirst();
+		 }
+		 GameplanPlay gameplanPlay = new GameplanPlay(cursor.getString(0), cursor.getString(1));
+		 db.close();
+		 return gameplanPlay;
 	}
 	
 	/*
@@ -506,7 +542,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		ArrayList<Gameplan> gameplanList = new ArrayList<Gameplan>();
 		
 	    // Select All Query
-	    String selectQuery = "SELECT * FROM " + TABLE_FORMATIONS;
+	    String selectQuery = "SELECT * FROM " + TABLE_GAMEPLANS;
 	 
 	    SQLiteDatabase db = this.getWritableDatabase();
 	    Cursor cursor = db.rawQuery(selectQuery, null);
@@ -525,6 +561,33 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	    }
 	    db.close();
 	    return gameplanList;
+	}
+	
+	public ArrayList<GameplanPlay> getAllGameplanPlays()
+	{
+		ArrayList<GameplanPlay> gameplanPlayList = new ArrayList<GameplanPlay>();
+		
+	    // Select All Query
+	    String selectQuery = "SELECT * FROM " + TABLE_GAMEPLAN_PLAYS;
+	 
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	 
+	    // looping through all rows and adding to list
+	    if (cursor.moveToFirst()) 
+	    {
+	        do 
+	        {
+	        	GameplanPlay gameplanPlay = new GameplanPlay();
+	        	gameplanPlay.setGameplanName(cursor.getString(0));
+	        	gameplanPlay.setPlayName(cursor.getString(1));
+	            
+	        	gameplanPlayList.add(gameplanPlay);
+	        } 
+	        while (cursor.moveToNext());
+	    }
+	    db.close();
+	    return gameplanPlayList;
 	}
 	
 	/*
@@ -581,6 +644,18 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	public int getGameplanCount()
 	{
 		String countQuery = "SELECT * FROM " + TABLE_GAMEPLANS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+ 
+        db.close();
+        // return count
+        return cursor.getCount();
+	}
+	
+	public int getGameplanPlayCount()
+	{
+		String countQuery = "SELECT * FROM " + TABLE_GAMEPLAN_PLAYS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
@@ -661,20 +736,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	    return retVal;
 	}
 	
-	public int updateGameplan(Gameplan gameplan)
-	{
-		SQLiteDatabase db = this.getWritableDatabase();
-		 
-	    ContentValues values = new ContentValues();
-	    values.put(KEY_GAMEPLAN_NAME, gameplan.getGameplanName());
-	 
-	    int retVal = db.update(TABLE_GAMEPLANS, values, KEY_GAMEPLAN_NAME + " = ?",
-	            new String[] { String.valueOf(gameplan.getGameplanName()) });
-	    db.close();
-	    // updating row
-	    return retVal;
-	}
-	
 	/*
 	 * DELETE SINGLE ROW IN TABLE
 	 */
@@ -715,6 +776,15 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_GAMEPLANS, KEY_GAMEPLAN_NAME + " = ?",
 	            new String[] { String.valueOf(gameplan.getGameplanName()) });
+	    db.close();
+	}
+	
+	public void deleteGameplanPlay(GameplanPlay gameplanPlay)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+	    db.delete(TABLE_GAMEPLAN_PLAYS, 
+	    		KEY_GAMEPLAN_NAME + " = ? AND " + KEY_PLAY_NAME + " = ?",
+	            new String[] { gameplanPlay.getGameplanName(), gameplanPlay.getPlayName() });
 	    db.close();
 	}
 }

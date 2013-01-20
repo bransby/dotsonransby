@@ -1,11 +1,16 @@
 package com.database;
 
-public class GameplanPlays 
+public class GameplanPlay 
 {
 	private String gameplan_name;
 	private String play_name;
 	
-	public GameplanPlays(String gameplan_name, String play_name)
+	public GameplanPlay()
+	{
+		
+	}
+	
+	public GameplanPlay(String gameplan_name, String play_name)
 	{
 		this.gameplan_name = gameplan_name;
 		this.play_name = play_name;
