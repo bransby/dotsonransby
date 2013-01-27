@@ -25,6 +25,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.database.DatabaseHandler;
+import com.database.Gameplan;
+import com.database.Play;
 import com.example.digplay.EmailPlaybook;
 
 public class PlayViewActivity extends Activity implements OnItemClickListener, OnClickListener, OnItemSelectedListener {
@@ -37,7 +39,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private TextView title;
 	private TextView playTypeTitle;
 	private TextView gamePlanTitle;
-	public static ArrayList<String> plays = new ArrayList<String>();
+	public static ArrayList<Play> plays = new ArrayList<Play>();
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -98,7 +100,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		ArrayList<String> playTypes = Constants.getPlayTypes();
 		
 		ArrayList<String> gameplans = new ArrayList<String>();
-		ArrayList<com.database.Gameplan> listOfGameplans = db.getAllGameplans();
+		ArrayList<Gameplan> listOfGameplans = db.getAllGameplans();
 		for (int i = 0; i < listOfGameplans.size(); i++)
 		{
 			gameplans.add(listOfGameplans.get(i).getGameplanName());
@@ -130,14 +132,8 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private void setListView() {
 		playList = (ListView)findViewById(R.id.playviewlist);
 		
-		ArrayList<String> plays = new ArrayList<String>();
-		ArrayList<com.database.Play> listOfPlays = db.getAllPlays();
-		for (int i = 0; i < listOfPlays.size(); i++)
-		{
-			plays.add(listOfPlays.get(i).getPlayName());
-		}
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.listview_item_row, plays);
+		ArrayList<Play> listOfPlays = db.getAllPlays();
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row, listOfPlays);
 		playList.setAdapter(adapter);
 		playList.setOnItemClickListener(this);
 	}

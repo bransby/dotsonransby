@@ -73,8 +73,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	
 	private static final String CREATE_GAMEPLAN_PLAYS = "CREATE TABLE "
 			+ TABLE_GAMEPLAN_PLAYS + "(" + KEY_GAMEPLAN_NAME
-			+ " TEXT PRIMARY KEY," + KEY_PLAY_NAME
-			+ " TEXT PRIMARY KEY)";
+			+ " TEXT," + KEY_PLAY_NAME
+			+ " TEXT, PRIMARY KEY (" 
+			+ KEY_GAMEPLAN_NAME + ", " + KEY_PLAY_NAME + "))";
 
 	public DatabaseHandler(Context context)
 	{
@@ -105,13 +106,54 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	}
 	
 	/*
+	 * removes all gameplan_plays
+	 */
+	public void removeAllGameplanPlaysWithName(String gameplan_name)
+	{
+		ArrayList<GameplanPlay> allGameplanPlays = getAllGameplanPlays();
+		for (int i = 0; i < allGameplanPlays.size(); i++)
+		{
+			GameplanPlay temp = allGameplanPlays.get(i);
+			if (temp.getGameplanName().equals(gameplan_name))
+			{
+				deleteGameplanPlay(temp.getGameplanName(), temp.getPlayName());
+			}
+		}
+	}
+	
+	/*
+	 * get all play names with gameplan name
+	 */
+	public ArrayList<String> getAllPlayNamesWithGameplan(String gameplan_name)
+	{
+		ArrayList<String> gameplanNames = new ArrayList<String>();
+		
+		String selectQuery = "SELECT " + KEY_PLAY_NAME + " FROM " + TABLE_GAMEPLAN_PLAYS
+				+ " WHERE " + KEY_GAMEPLAN_NAME + " = \"" + gameplan_name + "\"";
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	    
+	    // looping through all rows and adding to list
+	    if (cursor.moveToFirst()) 
+	    {
+	        do 
+	        { 
+	        	gameplanNames.add(cursor.getString(0));
+	        } 
+	        while (cursor.moveToNext());
+	    }
+	    db.close();
+	    return gameplanNames;
+	}
+	
+	/*
 	 * get all formation names
 	 */
 	public ArrayList<String> getAllFormationNames()
 	{
 		ArrayList<String> formationNames = new ArrayList<String>();
 		
-	    // Select All Query
 	    String selectQuery = "SELECT " + KEY_FORMATION_NAME + " FROM " + TABLE_FORMATIONS;
 	 
 	    SQLiteDatabase db = this.getWritableDatabase();
@@ -169,7 +211,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 			if (player.getPlayName() != null && player.getPlayName().equals(play_name))
 			{
 				player_ids.add(player.getPlayerId());
-				deletePlayer(player);
+				deletePlayer(player.getPlayerId());
 			}
 		}
 	    return player_ids;
@@ -188,7 +230,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 			if (player.getFormationName().equals(formation_name))
 			{
 				player_ids.add(player.getPlayerId());
-				deletePlayer(player);
+				deletePlayer(player.getPlayerId());
 			}
 		}
 	    return player_ids;
@@ -206,7 +248,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 				RouteLocation routeLocation = routeLocations.get(i);
 				if (routeLocation.getPlayerId() == player_ids.get(j))
 				{
-					deleteRouteLocation(routeLocation);
+					deleteRouteLocation(routeLocation.getRouteId());
 				}
 			}
 		}
@@ -739,52 +781,52 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	/*
 	 * DELETE SINGLE ROW IN TABLE
 	 */
-	public void deletePlayer(DatabasePlayer player)
+	public void deletePlayer(int playerId)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_PLAYERS, KEY_PLAYER_ID + " = ?",
-	            new String[] { String.valueOf(player.getPlayerId()) });
+	            new String[] { String.valueOf(playerId) });
 	    db.close();
 	}
 	
-	public void deletePlay(Play play)
+	public void deletePlay(String play_name)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_PLAYS, KEY_PLAY_NAME + " = ?",
-	            new String[] { play.getPlayName() });
+	            new String[] { play_name });
 	    db.close();
 	}
 	
-	public void deleteRouteLocation(RouteLocation routeLocation)
+	public void deleteRouteLocation(int routeId)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_ROUTE_LOCATIONS, KEY_ROUTE_ID + " = ?",
-	            new String[] { String.valueOf(routeLocation.getRouteId()) });
+	            new String[] { String.valueOf(routeId) });
 	    db.close();
 	}
 	
-	public void deleteFormation(Formation formation)
+	public void deleteFormation(String formation_name)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_FORMATIONS, KEY_FORMATION_NAME + " = ?",
-	            new String[] { String.valueOf(formation.getFormationName()) });
+	            new String[] { formation_name });
 	    db.close();
 	}
 	
-	public void deleteGameplan(Gameplan gameplan)
+	public void deleteGameplan(String gameplan_name)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_GAMEPLANS, KEY_GAMEPLAN_NAME + " = ?",
-	            new String[] { String.valueOf(gameplan.getGameplanName()) });
+	            new String[] { gameplan_name });
 	    db.close();
 	}
 	
-	public void deleteGameplanPlay(GameplanPlay gameplanPlay)
+	public void deleteGameplanPlay(String gameplan_name, String play_name)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_GAMEPLAN_PLAYS, 
 	    		KEY_GAMEPLAN_NAME + " = ? AND " + KEY_PLAY_NAME + " = ?",
-	            new String[] { gameplanPlay.getGameplanName(), gameplanPlay.getPlayName() });
+	            new String[] { gameplan_name, play_name });
 	    db.close();
 	}
 }

@@ -33,15 +33,15 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private Button emailPlay;
 	private ArrayList<String> playNameList = new ArrayList<String>();
 	private int counter;
-	ArrayList<String> playFormationList = new ArrayList<String>();
+	private ArrayList<String> playFormationList = new ArrayList<String>();
 	
-	ArrayList<Bitmap> test = new ArrayList<Bitmap>();
-	ViewFlipper page;
+	private ArrayList<Bitmap> test = new ArrayList<Bitmap>();
+	private ViewFlipper page;
 
-	Animation animFlipInForeward;
-	Animation animFlipOutForeward;
-	Animation animFlipInBackward;
-	Animation animFlipOutBackward;
+	private Animation animFlipInForeward;
+	private Animation animFlipOutForeward;
+	private Animation animFlipInBackward;
+	private Animation animFlipOutBackward;
 	
 	
 	
@@ -56,7 +56,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	private void setImageView() {
-		/* TODO michael
+		/*
 		page = (ViewFlipper) findViewById(R.id.viewFlipper1);
 		playNameList = getIntent().getExtras().getStringArrayList("playList");
 				
@@ -66,12 +66,9 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(thePlay);	
 		((TextView)findViewById(R.id.browsing_play_name)).setText(thePlay);
 		page.addView(setFlipperImage(BitmapFactory.decodeByteArray(test, 0, test.length)));
-		*/
 		
-	/*	
 		ArrayList<Field> tmp = new ArrayList<Field>();
 		tmp  = DigPlayDB.getInstance(getBaseContext()).getAllPlays();	
-		
 	
 		for(int i = 0 ;i < tmp.size(); i++){
 			//  This will create dynamic image view and add them to ViewFlipper	
@@ -88,15 +85,15 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			//playNameList.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
 		}
 		//page.setDisplayedChild(playNameList.indexOf(getIntent().getExtras().getString("playName")));
-*/
 		animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
 		animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
 		animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
 		animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
+		*/
 	}
 
 	private void email() throws IOException {
-		/* TODO michael
+		/*
 		String emailText = "This play was sent to you from the playbook android app.";
 		String subject = "Play: " + playName.getText();
 		
@@ -125,7 +122,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		EmailPlaybook.EmailAttachment(this, "digital-playbook@googlegroups.com", subject, emailText, attachment);
 		
 		//myFile.delete();
-		 */
+		*/
 	}
 	
 	private void setButtons() {
@@ -148,7 +145,6 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(View v) {
-		/* TODO michael
 		if (v.getId() == emailPlay.getId()) {
 			try {
 				email();
@@ -157,19 +153,21 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 		} else if (v.getId() == editPlay.getId()){
+			/*
 			Field selectedField = (Field) DigPlayDB.getInstance(getBaseContext()).getPlayByName(playNameList.get(counter)) ;
 			Intent intent = new Intent(getBaseContext(),EditorActivity.class);
 			intent.putExtra("Field", selectedField);
 			startActivity(intent);
+			*/
 		}
-		*/
 	}
 
 	private void SwipeRight(){
-		/* TODO michael
+
 		page.setInAnimation(animFlipInBackward);
 		page.setOutAnimation(animFlipOutBackward);
 		
+		/*
 		if(counter - 1 >= 0){
 			counter -= 1;
 			byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(playNameList.get(counter));	
@@ -187,12 +185,12 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
 			
 			//page.showPrevious();
-		}		
+		}
 		*/
 	}
 
 	private void SwipeLeft(){
-		/* TODO michael
+		/*
 		page.setInAnimation(animFlipInForeward);
 		page.setOutAnimation(animFlipOutForeward);
 
@@ -216,9 +214,9 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		}
 		*/
 	}
-	SimpleOnGestureListener simpleOnGestureListener 
-	= new SimpleOnGestureListener(){
-
+	
+	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener()
+	{
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {

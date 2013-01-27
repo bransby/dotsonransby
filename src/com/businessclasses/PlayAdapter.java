@@ -3,6 +3,7 @@ package com.businessclasses;
 
 import java.util.ArrayList;
 
+import com.database.Play;
 import com.example.digplay.PlayViewActivity;
 import com.example.digplay.R;
 
@@ -15,23 +16,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PlayAdapter extends ArrayAdapter<Field>{
+public class PlayAdapter extends ArrayAdapter<Play>{
 	
     Context context; 
     int layoutResourceId;    
-    ArrayList<Field> plays = null;
+    ArrayList<Play> plays = null;
     
-    public PlayAdapter(Context context, int layoutResourceId, ArrayList<Field> plays) {
+    public PlayAdapter(Context context, int layoutResourceId, ArrayList<Play> plays) {
         super(context, layoutResourceId,plays);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.plays = plays;
     }
-    /*
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -51,8 +49,8 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         else{
             holder = (ContactHolder)row.getTag();
         }
-        Field play = plays.get(position);
-        if(play.getPlayType().equals("RUN")){
+        Play play = plays.get(position);
+        if(play.getType().equals("RUN")){
         	holder.imgIcon.setImageResource(R.drawable.rush_pic);
         }else{
         	holder.imgIcon.setImageResource(R.drawable.pass_pic);
@@ -61,11 +59,9 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         holder.topTitle.setTextSize(22);
         holder.topTitle.setTypeface(null, Typeface.BOLD);
         
-        holder.bottomTitle.setText(play.getPlayFormation());
+        holder.bottomTitle.setText(play.getFormationName());
         row.setBackgroundColor(Color.WHITE);
         
-        //Log.i("list of plays", "" + plays.toString());
-        PlayViewActivity.plays = null;
         PlayViewActivity.plays = plays;
               
         return row;
@@ -76,5 +72,4 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         TextView topTitle;
         TextView bottomTitle;
     }
-    */
 }
