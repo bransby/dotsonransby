@@ -286,7 +286,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	    			// add the play
 	    			convertRouteBitmapToByteArray();
 	    			
-	    			Play play = new Play(playName.toString(), formationName, playType.toString(), fieldBitmap);
+	    			Play play = new Play(playName.toString(), formationName, (String) playType.getSelectedItem(), fieldBitmap);
 	    			db.addPlay(play);
 					
 	    			addPlayPlayersToDB();

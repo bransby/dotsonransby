@@ -50,6 +50,7 @@ public class PlayAdapter extends ArrayAdapter<Play>{
             holder = (ContactHolder)row.getTag();
         }
         Play play = plays.get(position);
+        System.out.println(play.toString());
         if(play.getType().equals("RUN")){
         	holder.imgIcon.setImageResource(R.drawable.rush_pic);
         }else{

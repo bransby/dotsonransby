@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
 import com.businessclasses.PlayAdapter;
+import com.businessclasses.Sort;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -101,11 +102,11 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		
 		ArrayList<String> gameplans = new ArrayList<String>();
 		ArrayList<Gameplan> listOfGameplans = db.getAllGameplans();
+		gameplans.add("Playbook");
 		for (int i = 0; i < listOfGameplans.size(); i++)
 		{
 			gameplans.add(listOfGameplans.get(i).getGameplanName());
 		}
-		gameplans.add("All Gameplans");
 		
 		ArrayAdapter<String> playTypeAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,playTypes);
 		ArrayAdapter<String> gamePlanAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplans);
@@ -165,21 +166,19 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void updateList()
 	{
-		/*
 		// get plays
 		Sort s = new Sort();
-		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row, db.getAllPlays());
 		
 		// get selections from spinners
 		String playType = (String)playSort.getSelectedItem();
-		String playbook = (String)gamePlans.getSelectedItem();
+		String playbook = (String)gameplanSpinner.getSelectedItem();
 		
 		// filter by selection
-		ArrayList<String> listOfPlaysInGameplan = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(playbook);
+		ArrayList<String> listOfPlaysInGameplan = db.getAllPlayNamesWithGameplan(playbook);
 		adapter = s.sortPlaysByRunPass(adapter, playType);
 		adapter = s.sortPlaysByPlaybook(adapter, playbook, listOfPlaysInGameplan);
 		playList.setAdapter(adapter);
-		*/
 	}
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {}
 	public void onNothingSelected(AdapterView<?> arg0) {}
