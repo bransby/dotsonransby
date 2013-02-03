@@ -1,0 +1,34 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/cu_stadium" >
+
+    <Button
+        android:id="@+id/maindrawplay"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="DRAW NEW PLAY"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/maincreategameplan"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:text="GAMEPLAN MANAGER"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/mainlookatplaybook"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="245dp"
+        android:text="LOOK AT PLAYBOOK"
+        android:textSize="25dp" />
+
+</RelativeLayout>
