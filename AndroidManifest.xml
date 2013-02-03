@@ -15,8 +15,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainMenuActivity"
-            android:screenOrientation="sensorLandscape"
-            android:label="@string/title_activity_main_menu" >
+            android:screenOrientation="sensorLandscape">
         </activity>
         <activity android:name="PlayViewActivity"
             android:screenOrientation="sensorLandscape"></activity>
