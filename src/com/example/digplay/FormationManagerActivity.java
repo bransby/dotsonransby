@@ -3,7 +3,9 @@ package com.example.digplay;
 import java.util.ArrayList;
 
 import com.businessclasses.Field;
+import com.businessclasses.FormationAdapter;
 import com.database.DatabaseHandler;
+import com.database.Formation;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -75,21 +77,21 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 		formationsList = (ListView)findViewById(R.id.formations_list);
 
 		ArrayList<String> formations = new ArrayList<String>();
-		ArrayList<com.database.Formation> listOfFormations = db.getAllFormations();
+		ArrayList<Formation> listOfFormations = db.getAllFormations();
 		for (int i = 0; i < listOfFormations.size(); i++)
 		{
 			formations.add(listOfFormations.get(i).getFormationName());
 		}
 		
-		/* TODO: michael
-		if(formations.isEmpty()){
-			Field f = new Field();
-			Formation emptyFormation = new Formation("There are no saved formations",f);
-			formations.add(emptyFormation);
+		if(formations.isEmpty())
+		{
+			//Field f = new Field();
+			//Formation emptyFormation = new Formation("There are no saved formations",f);
+			//formations.add();
 		}
-		FormationAdapter adapter = new FormationAdapter(this,R.layout.formation_listview_item_row,formations);
+		FormationAdapter adapter = new FormationAdapter(this,R.layout.formation_listview_item_row, listOfFormations);
 		formationsList.setAdapter(adapter);
-		*/
+		
 		formationsList.setOnItemClickListener(this);
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {

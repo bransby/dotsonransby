@@ -2,9 +2,12 @@ package com.businessclasses;
 
 import java.util.ArrayList;
 
+import com.database.Formation;
 import com.example.digplay.R;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,18 +16,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FormationAdapter {
-	/*
+public class FormationAdapter extends ArrayAdapter<Formation>{
+	
 	Context context; 
     int layoutResourceId;    
     ArrayList<Formation> formations = null;
     
     public FormationAdapter(Context context, int layoutResourceId, ArrayList<Formation> formations) {
-        super(context, layoutResourceId,formations);
+    	super(context, layoutResourceId,formations);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.formations = formations;
     }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
@@ -43,9 +47,10 @@ public class FormationAdapter {
             holder = (ContactHolder)row.getTag();
         }
         Formation formation = formations.get(position);
-        holder.formationIcon.setImageResource(R.drawable.field);
-        //holder.formationIcon.setImageBitmap(DigPlayDB.getInstance(context).getFormationImage(formation.getName()));
-        holder.formationName.setText(formation.getName());
+        byte[] formationByteArray = formation.getBitmap();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(formationByteArray, 0, formationByteArray.length);
+        holder.formationIcon.setImageBitmap(bitmap);
+        holder.formationName.setText(formation.getFormationName());
         row.setBackgroundColor(Color.WHITE);
         return row;
     }
@@ -54,5 +59,5 @@ public class FormationAdapter {
         ImageView formationIcon;
         TextView formationName;
     }
-	*/
+	
 }

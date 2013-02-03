@@ -3,6 +3,8 @@ package com.example.digplay;
 import java.util.ArrayList;
 
 import com.database.DatabaseHandler;
+import com.database.Gameplan;
+import com.database.GameplanPlay;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -71,7 +72,6 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	    setSpinner();
 	    deletePressed = false;
 	    startNotification();
-	    //DigPlayDB.getInstance(getBaseContext()).emptyGamePlanDB();
 	}
 	
 	private void setSpinner() {
@@ -117,31 +117,31 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	}
 	
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-		/* TODO michael
+		
 		boolean isGamePlanClicked = false;
 		if(adapter.getId() == gameplanLV.getId())
 		{
 			isGamePlanClicked = true;
 		}
+		
 		if(!deletePressed)
 		{
 			String playSelected = (String) adapter.getItemAtPosition(position);
 			if(!gameplanPlays.contains(playSelected))
 			{
-				gameplanPlays.add(playSelected);
-				//ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
-				//gameplanLV.setAdapter(thisAdapter);
-				resetGameplanList();
-				Toast.makeText(this, "Play has been added to the gameplan",Toast.LENGTH_SHORT).show();
-
-				//store to database
-				int index = gameplansSpinner.getSelectedItemPosition();
-				if(index >= 0)
+				if (!gameplansSpinner.getAdapter().isEmpty())
 				{
-					//gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
-					//gameplan.addPlayToGamePlan(playSelected);
-					//gameplan.addPlaysToGameplan(gameplanPlays);
-					DigPlayDB.getInstance(getBaseContext()).addPlayToGameplan(gameplansSpinner.getAdapter().getItem(index).toString(), playSelected);
+					gameplanPlays.add(playSelected);
+					resetGameplanList();
+					Toast.makeText(this, "Play has been added to the gameplan",Toast.LENGTH_SHORT).show();
+
+					//store to database
+					int index = gameplansSpinner.getSelectedItemPosition();
+					if(index >= 0)
+					{
+						GameplanPlay gameplanPlay = new GameplanPlay(gameplansSpinner.getAdapter().getItem(index).toString(), playSelected);
+						db.addGameplanPlay(gameplanPlay);
+					}
 				}
 			}
 			else
@@ -159,11 +159,9 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 			deleteContext = this;
 			verifyDelete();
 		}
-		*/
 	}
 	private void verifyDelete() 
 	{
-		/* TODO michael
 		Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Caution");
 		alert.setMessage("Are you sure you want to delete this play from the gameplan?");
@@ -171,25 +169,17 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		{
 			public void onClick(DialogInterface dialog, int which)
 			{
-				gameplanPlays.remove(positionSelected);
-				
-				//store to database
 				int index = gameplansSpinner.getSelectedItemPosition();
-				GamePlan gameplan = new GamePlan();
-				if(index >= 0)
-				{
-					gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
-					gameplan.addPlaysToGameplan(gameplanPlays);
-					DigPlayDB.getInstance(getBaseContext()).storeGamePlan(gameplan);
-				}
+				String gameplanName = gameplansSpinner.getAdapter().getItem(index).toString();
+				String removedPlayName = gameplanPlays.remove(positionSelected);
+				db.deleteGameplanPlay(gameplanName, removedPlayName);
 					
-				ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(deleteContext,android.R.layout.simple_list_item_1,gameplanPlays);
+				ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(deleteContext, android.R.layout.simple_list_item_1,gameplanPlays);
 				gameplanLV.setAdapter(thisAdapter);
 			}
 		});
 		alert.setNegativeButton("Cancel", null);
 		alert.show();
-		*/
 	}
 	public void onClick(View v) {		
 		if(v.getId() == delete.getId()){
@@ -212,7 +202,6 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	}
 	private void gameplanDeleteVerify() 
 	{
-		/* TODO michael
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Caution");
 		alert.setMessage("You have selected to delete the entire gameplan. Are you sure you want to do this? It will be deleted from the database.");
@@ -224,7 +213,9 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 			if(gameplansSpinner.getChildCount() > 0)
 			{
 				int index = gameplansSpinner.getSelectedItemPosition();
-				DigPlayDB.getInstance(getBaseContext()).deleteGamePlan(gameplansSpinner.getAdapter().getItem(index).toString());
+				String gameplanName = gameplansSpinner.getAdapter().getItem(index).toString();
+				db.deleteGameplan(gameplanName);
+				db.removeAllGameplanPlaysWithName(gameplanName);
 				gameplans.remove(gameplans.indexOf(gameplansSpinner.getAdapter().getItem(index).toString()));
 				
 				ArrayAdapter<String>adapter = new ArrayAdapter<String>(gameplanDeleteContext,android.R.layout.simple_list_item_1,gameplans);
@@ -237,12 +228,10 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		});
 		alert.setNegativeButton("Whoops. No don't delete",null);
 		alert.show();
-		 */
 	}
 
 	private void popupForName() 
 	{
-		/* TODO michael
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Add Gameplan");
 		alert.setMessage("Type in name of gameplan to add");
@@ -253,12 +242,9 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 			public void onClick(DialogInterface dialog, int whichButton)
 			{		
 				String newName = input.getText().toString();
-				ArrayList<String> newPlays = new ArrayList<String>();
 
-				GamePlan newGameplan = new GamePlan();
-				newGameplan.setGamePlanName(newName);
-				newGameplan.addPlaysToGameplan(newPlays);
-				DigPlayDB.getInstance(getBaseContext()).storeGamePlan(newGameplan);
+				Gameplan gameplan = new Gameplan(newName);
+				db.addGameplan(gameplan);
 				
 				gameplans.add(newName);
 				ArrayAdapter<String>adapter = new ArrayAdapter<String>(gameplanAddContext,android.R.layout.simple_list_item_1,gameplans);
@@ -277,24 +263,19 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		});
 
 		alert.show();
-		*/
 	}
 
 	public void onItemSelected(AdapterView<?> adapter, View v, int position,long arg3)
 	{
-		/* TODO michael
 		int index = gameplansSpinner.getSelectedItemPosition();
 		String gameplanSelected = gameplansSpinner.getAdapter().getItem(index).toString();		
-		//DigPlayDB db = DigPlayDB.getInstance(this);
-		//GamePlan newGameplan = db.getGameplanPlays(gameplanSelected); 
-		//gameplanPlays = newGameplan.getGamePlan(game);
-		gameplanPlays = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(gameplanSelected);
+
+		gameplanPlays = db.getAllPlayNamesWithGameplan(gameplanSelected);
 
 		resetGameplanList();
-<<<<<<< HEAD
+
 		Toast toast = Toast.makeText(this, gameplanSelected, Toast.LENGTH_LONG);
 		toast.show();
-		*/
 	}
 
 	public void onNothingSelected(AdapterView<?> arg0) 

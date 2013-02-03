@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
 import com.businessclasses.PlayAdapter;
+import com.businessclasses.Sort;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.database.DatabaseHandler;
+import com.database.Gameplan;
+import com.database.Play;
 import com.example.digplay.EmailPlaybook;
 
 public class PlayViewActivity extends Activity implements OnItemClickListener, OnClickListener, OnItemSelectedListener {
@@ -37,7 +40,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private TextView title;
 	private TextView playTypeTitle;
 	private TextView gamePlanTitle;
-	public static ArrayList<String> plays = new ArrayList<String>();
+	public static ArrayList<Play> plays = new ArrayList<Play>();
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -98,12 +101,12 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		ArrayList<String> playTypes = Constants.getPlayTypes();
 		
 		ArrayList<String> gameplans = new ArrayList<String>();
-		ArrayList<com.database.Gameplan> listOfGameplans = db.getAllGameplans();
+		ArrayList<Gameplan> listOfGameplans = db.getAllGameplans();
+		gameplans.add("Playbook");
 		for (int i = 0; i < listOfGameplans.size(); i++)
 		{
 			gameplans.add(listOfGameplans.get(i).getGameplanName());
 		}
-		gameplans.add("All Gameplans");
 		
 		ArrayAdapter<String> playTypeAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,playTypes);
 		ArrayAdapter<String> gamePlanAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplans);
@@ -130,14 +133,8 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private void setListView() {
 		playList = (ListView)findViewById(R.id.playviewlist);
 		
-		ArrayList<String> plays = new ArrayList<String>();
-		ArrayList<com.database.Play> listOfPlays = db.getAllPlays();
-		for (int i = 0; i < listOfPlays.size(); i++)
-		{
-			plays.add(listOfPlays.get(i).getPlayName());
-		}
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.listview_item_row, plays);
+		ArrayList<Play> listOfPlays = db.getAllPlays();
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row, listOfPlays);
 		playList.setAdapter(adapter);
 		playList.setOnItemClickListener(this);
 	}
@@ -169,21 +166,19 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void updateList()
 	{
-		/*
 		// get plays
 		Sort s = new Sort();
-		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row, db.getAllPlays());
 		
 		// get selections from spinners
 		String playType = (String)playSort.getSelectedItem();
-		String playbook = (String)gamePlans.getSelectedItem();
+		String playbook = (String)gameplanSpinner.getSelectedItem();
 		
 		// filter by selection
-		ArrayList<String> listOfPlaysInGameplan = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(playbook);
+		ArrayList<String> listOfPlaysInGameplan = db.getAllPlayNamesWithGameplan(playbook);
 		adapter = s.sortPlaysByRunPass(adapter, playType);
 		adapter = s.sortPlaysByPlaybook(adapter, playbook, listOfPlaysInGameplan);
 		playList.setAdapter(adapter);
-		*/
 	}
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {}
 	public void onNothingSelected(AdapterView<?> arg0) {}
