@@ -3,6 +3,10 @@ package com.businessclasses;
 import java.util.ArrayList;
 
 public class Constants {
+	
+	public static boolean FREE_VERSION = true;
+	public final static int NUMBER_OF_FREE_PLAYS_ALLOWED = 8;
+	
 	public static ArrayList<String> getPlayTypes(){
 		ArrayList<String> playTypes = new ArrayList<String>();
 		playTypes.add("ALL PLAYS");
