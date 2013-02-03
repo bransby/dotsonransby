@@ -65,11 +65,11 @@ public class SaveActivity extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
-	    super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
+	   
 	    setContentView(R.layout.save);
 	    
 	    db = new DatabaseHandler(this);
-	    
 	    
 	    field = EditorActivity.getField();
 	    
@@ -79,7 +79,8 @@ public class SaveActivity extends Activity implements OnClickListener {
 	    
 	    input = new EditText(this);
 	    
-	    formationName = FormationManagerActivity.getFormationName();
+	    Bundle extras = getIntent().getExtras();
+		formationName = (String)extras.getSerializable("formation_name");
 	    
 		if (formationName == null)
 		{

@@ -106,6 +106,43 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	}
 	
 	/*
+	 * gets all players with formation_name
+	 */
+	public ArrayList<DatabasePlayer> getPlayersWithFormationName(String formation_name)
+	{
+		ArrayList<DatabasePlayer> playerList = new ArrayList<DatabasePlayer>();
+		
+	    // Select All Query
+	    String selectQuery = "SELECT * FROM " + TABLE_PLAYERS + " WHERE " 
+	    		+ COLUMN_FORMATION_NAME + " = \"" + formation_name + "\"";
+	 
+	    SQLiteDatabase db = this.getWritableDatabase();
+	    Cursor cursor = db.rawQuery(selectQuery, null);
+	 
+	    // looping through all rows and adding to list
+	    if (cursor.moveToFirst()) 
+	    {
+	        do 
+	        {
+	            DatabasePlayer player = new DatabasePlayer();
+	            player.setPlayerId(Integer.parseInt(cursor.getString(0)));
+	            player.setPlayName(cursor.getString(1));
+	            player.setFormationName(cursor.getString(2));
+	            player.setX(Integer.parseInt(cursor.getString(3)));
+	            player.setY(Integer.parseInt(cursor.getString(4)));
+	            player.setPosition(cursor.getString(5));
+	            player.setRoute(cursor.getString(6));
+	            player.setPath(cursor.getString(7));
+	            
+	            playerList.add(player);
+	        } 
+	        while (cursor.moveToNext());
+	    }
+	    db.close();
+	    return playerList;
+	}
+	
+	/*
 	 * removes all gameplan_plays
 	 */
 	public void removeAllGameplanPlaysWithName(String gameplan_name)
@@ -640,7 +677,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		String countQuery = "SELECT * FROM " + TABLE_PLAYERS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
  
         db.close();
         // return count
@@ -652,7 +688,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		String countQuery = "SELECT * FROM " + TABLE_PLAYS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
  
         db.close();
         // return count
@@ -664,7 +699,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		String countQuery = "SELECT * FROM " + TABLE_ROUTE_LOCATIONS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
  
         db.close();
         // return count
@@ -676,7 +710,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		String countQuery = "SELECT * FROM " + TABLE_FORMATIONS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
  
         db.close();
         // return count
@@ -688,7 +721,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		String countQuery = "SELECT * FROM " + TABLE_GAMEPLANS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
  
         db.close();
         // return count
@@ -700,7 +732,6 @@ public class DatabaseHandler extends SQLiteOpenHelper
 		String countQuery = "SELECT * FROM " + TABLE_GAMEPLAN_PLAYS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
  
         db.close();
         // return count

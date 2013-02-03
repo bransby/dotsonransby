@@ -95,12 +95,10 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 		formationsList.setOnItemClickListener(this);
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-		/* TODO michael
 		Formation selectedFormation = (Formation)adapter.getItemAtPosition(position);
 		Intent intent = new Intent(v.getContext(),EditorActivity.class);
-		intent.putExtra("Formation", selectedFormation);
+		intent.putExtra("formation_name", selectedFormation.getFormationName());
 		startActivity(intent);
-		*/
 	}
 	public void onClick(View v) {
 		Intent intent  = new Intent(v.getContext(),EditorActivity.class);

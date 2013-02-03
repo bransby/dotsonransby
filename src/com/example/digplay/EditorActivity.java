@@ -1,12 +1,16 @@
 package com.example.digplay;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
 import com.businessclasses.Path;
 import com.businessclasses.Player;
+import com.businessclasses.Position;
 import com.businessclasses.Route;
+import com.database.DatabaseHandler;
+import com.database.DatabasePlayer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,10 +35,12 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 
 public class EditorActivity extends Activity implements OnClickListener  {
+	
+	private DatabaseHandler db;
+	
+	private String formation_name; // name of this formation
 
 	private static Context context; // used for saving context of drawView
-	
-	private static boolean noFormation;
 	
 	private static boolean arrowRoute; // is the route an arrow?
 	private static boolean solidPath; // is the path solid?
@@ -74,6 +80,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		db = new DatabaseHandler(this);
 		DENSITY = getResources().getDisplayMetrics().density;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
@@ -108,16 +115,19 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}
 		else
 		{
-			//Formation formation = (Formation)extras.getSerializable("Formation");
-			Field passedField = (Field)extras.getSerializable("Field");
+			formation_name = (String)extras.getSerializable("formation_name");
 			
-			//if(formation != null) 
-				//field = formation.getFormation();
-			//else if (passedField != null) 
-			if (passedField != null)
-				field = passedField.getField();
-			else 
-				field = new Field();
+			field = new Field();
+			if(formation_name != null) 
+			{
+				ArrayList<DatabasePlayer> players= db.getPlayersWithFormationName(formation_name);
+				for (int i = 0; i < players.size(); i++)
+				{
+					DatabasePlayer thisPlayer = players.get(i);
+					Location playerLocation = new Location(thisPlayer.getX(), thisPlayer.getY());
+					field.addPlayer(playerLocation, Position.valueOf(thisPlayer.getPosition()));
+				}
+			}
 		}
 	}
 	
@@ -576,6 +586,10 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			drawView.drawToRouteBitmap();
 			drawView.drawToFormationBitmap();
 			intent = new Intent(v.getContext(),SaveActivity.class);
+			if (formation_name != null)
+			{
+				intent.putExtra("formation_name", formation_name);
+			}
 			startActivity(intent);
 		}else if(id == clearPlayerRoute.getId()){
 			if (playerIndex != -1)
