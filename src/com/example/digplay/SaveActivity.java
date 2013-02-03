@@ -56,6 +56,11 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private AlertDialog.Builder overwriteFormationBuilder;
 	private AlertDialog.Builder confirmOverwriteFormationBuilder;
 	
+	private final static String TOO_MANY_PLAYS_MESSAGE= "You have reached the maximum number of plays you're " +
+									"allowed to save in the free version of the app. "  +
+									"Download the paid version to have unlimited plays. The " +
+									"plays you already created will carryover for this device";
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -64,6 +69,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	    setContentView(R.layout.save);
 	    
 	    db = new DatabaseHandler(this);
+	    
 	    
 	    field = EditorActivity.getField();
 	    
@@ -218,6 +224,13 @@ public class SaveActivity extends Activity implements OnClickListener {
 
 	public void onClick(final View v)
 	{		
+		if(Constants.FREE_VERSION){
+			int numberOfSavedPlays = db.getPlayCount();
+			if(numberOfSavedPlays >= Constants.NUMBER_OF_FREE_PLAYS_ALLOWED){
+				tooManyPlaysDialog();
+				return;
+			}
+		}
 		playName = enterPlayName.getText().toString();
 		ArrayList<String> playNames = db.getAllPlayNames();
 	    boolean playNameExists = false;
@@ -304,6 +317,20 @@ public class SaveActivity extends Activity implements OnClickListener {
 	    }
 	}
 	
+	private void tooManyPlaysDialog() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setTitle("Your Title");	
+		alertDialogBuilder
+				.setMessage(TOO_MANY_PLAYS_MESSAGE)
+				.setPositiveButton("",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id) {
+						
+					}
+				  });
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+	}
+
 	// convert the formation bitmap to a byte array
 	private void convertFormationBitmapToByteArray()
 	{
